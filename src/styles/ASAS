@@ -1,0 +1,97 @@
+.address-container {
+  display: flex;
+  gap: 30px;
+  background: #fdf6e3;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.address-list {
+  flex: 1;
+}
+
+.steps {
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.steps .active {
+  color: #000;
+}
+
+.address-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+}
+
+.address-card.selected {
+  border: 2px solid #fd7e14;
+}
+
+.address-card input {
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.address-details h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.badge {
+  background: #ffe5b4;
+  color: #fd7e14;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.address-details p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+}
+
+.address-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.address-actions .edit {
+  background: none;
+  border: none;
+  color: #444;
+  cursor: pointer;
+}
+
+.address-actions .remove {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
+
+.add-new {
+  color: #fd7e14;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Right Summary Box - Reuse CartPage styles */
+.order-summary {
+  width: 320px;
+  background: #fff;
+  
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

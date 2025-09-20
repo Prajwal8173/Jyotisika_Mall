@@ -1,0 +1,101 @@
+/* Container Styling */
+.auth-container {
+  font-family: "Inter", sans-serif;
+  background-color: #fff;
+}
+
+/* Left Section */
+.auth-left {
+  background: linear-gradient(to right, #fff8d5, #ffeaa7);
+}
+
+.auth-left h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.auth-left ul li {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+.auth-left img {
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Right Section */
+.auth-right {
+  background: #fafafa;
+}
+
+.card {
+  border-radius: 12px;
+  border: none;
+}
+
+.card h3 {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Input Styling */
+.form-control {
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border 0.3s;
+}
+
+.form-control:focus {
+  border-color: #f4b400;
+  box-shadow: 0 0 6px rgba(244, 180, 0, 0.3);
+}
+
+/* Button Styling */
+button.btn {
+  padding: 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+button.btn-warning {
+  background-color: #f4b400;
+  border: none;
+  color: #fff;
+}
+
+button.btn-warning:hover {
+  background-color: #dca200;
+}
+
+button.btn-success {
+  background-color: #28a745;
+  border: none;
+  color: #fff;
+}
+
+button.btn-success:hover {
+  background-color: #218838;
+}
+
+/* Message Styling */
+.auth-message,
+.alert {
+  font-size: 14px;
+}
+
+/* Bottom Link */
+.auth-switch span {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.auth-switch span:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}

@@ -1,0 +1,12 @@
+# netlify.toml
+[build]
+  # Command to build your project
+  command = "npm run build"
+  # Folder to publish (Vite default)
+  publish = "dist"
+
+# Redirect all routes to index.html for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

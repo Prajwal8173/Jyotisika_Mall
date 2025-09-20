@@ -1,0 +1,303 @@
+.step-active {
+  font-weight: 700 !important;
+  color: black;
+}
+
+/* === Page Layout === */
+.page-container {
+  display: flex;
+  flex-wrap: wrap;
+  /* ✅ allow wrapping */
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  background-color: #fdf8ee;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  width: 83%;
+  margin-left: 50px;
+}
+
+/* === Address Section === */
+.address-section {
+  flex: 1;
+  min-width: 300px;
+  /* ✅ shrink gracefully */
+  margin-left: 0;
+}
+
+.address-header {
+  font-size: 22px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  /* ✅ handle small screens */
+}
+
+.address-header span {
+  color: #999;
+  font-weight: normal;
+  margin-right: 16px;
+}
+
+/* === Address Card === */
+.address-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #fdf8ee;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  width: 100%;
+  /* ✅ no fixed 820px */
+  min-height: 104px;
+  flex-wrap: wrap;
+}
+
+.address-card.active {
+  line-height: 1.7;
+  color: #222;
+}
+
+.address-left {
+  flex: 1;
+}
+
+.address-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.address-title h3 {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+}
+
+.address-type {
+  font-size: 12px;
+  color: #f97316;
+  border: 1px solid #f97316;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.address-text {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.address-actions {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.address-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.address-actions button.edit {
+  color: #2563eb;
+}
+
+.address-actions button.remove {
+  color: #dc2626;
+}
+
+/* === Add Address Button === */
+.add-address-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: #f97316;
+  font-weight: 500;
+  font-size: 16px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.add-address-btn span {
+  border: none;
+  background: none;
+}
+
+/* === Summary Section === */
+.summary-section {
+  flex: 0 0 360px;
+  width: 100%;
+  max-width: 100%;
+  background: #fff;
+  line-height: 2.5;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  border-radius: 8px;
+}
+
+.summary-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.product-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.product-info h4 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.product-info p {
+  font-size: 14px;
+  color: #555;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: 6px 0;
+}
+
+.summary-total {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 12px;
+}
+
+.estimated-delivery {
+  font-size: 13px;
+  color: #555;
+  margin-top: 8px;
+}
+
+.coupon-input {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.checkout-btn {
+  width: 100%;
+  background-color: #f97316;
+  color: white;
+  font-size: 16px;
+  padding: 2px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #ea580c;
+}
+
+/* --- Add New Address Form --- */
+.address-form {
+  margin-top: 15px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.address-form input {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.address-form input:focus {
+  border-color: #ff6a00;
+  box-shadow: 0 0 4px rgba(255, 106, 0, 0.4);
+}
+
+.address-form button {
+  background: #ff6a00;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.address-form button:hover {
+  background: #e95c00;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .page-container {
+    flex-direction: column;
+    /* ✅ stack sections */
+    padding: 16px;
+  }
+
+  .summary-section {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .address-header {
+    font-size: 18px;
+    flex-wrap: wrap;
+  }
+
+  .address-card {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .summary-total {
+    font-size: 16px;
+  }
+
+  .checkout-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+}

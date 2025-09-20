@@ -1,0 +1,254 @@
+body {
+  background: #fdf8ee;
+}
+
+.shipping-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 0;
+  background: #fdf8ee;
+}
+
+.shipping-grid {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 1300px;
+}
+.shipping-left {
+  flex: 1;
+  margin-left: 45px;
+  width: 820px;
+}
+.shipping-summary {
+  width: 380px;
+  background: #fff;
+  
+  padding: 32px 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  min-width: 380px;
+  margin-right: 95px;
+}
+
+.shipping-left {
+  flex: 2;
+}
+
+/* .shipping-stepper {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #bdbdbd;
+  width: 491px;
+  
+  }
+  .shipping-stepper span {
+    margin-right: 20px;
+}
+.shipping-stepper .step-active {
+  color: #222;
+  font-weight: 700;
+  
+}
+.shipping-stepper .step-arrow {
+  margin: 0 12px;
+  color: #bdbdbd;
+  margin-right: 20px;
+} */
+.address-header {
+  font-size: 22px;
+  font-weight: 600;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+margin-left: 0px;  /* ✅ handle small screens */
+}
+
+.address-header span {
+  color: #999;
+  font-weight: normal;
+  
+}
+
+.shipping-method-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #222;
+}
+
+.shipping-method-list {
+  /* background: #fff; */
+  border-radius: 8px;
+  border: 1px solid #e4e4e4;
+  overflow: hidden;
+}
+.shipping-method-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  border-bottom: 1px solid #ececec;  
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.shipping-method-option:last-child {
+  border-bottom: none;
+}
+.shipping-method-option.selected {
+  background: #fff8ef;
+  border-left: 3px solid #ff7a00;
+}
+.shipping-method-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.shipping-radio {
+  width: 22px;
+  height: 22px;
+  accent-color: #ff7a00;
+}
+.shipping-method-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #222;
+}
+.shipping-method-desc {
+  font-size: 16px;
+  color: #444;
+  font-weight: 400;
+  margin-left: 8px;
+}
+.shipping-method-date {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+}
+.shipping-method-date.select {
+  color: #bdbdbd;
+  font-weight: 500;
+}
+
+/* Order Summary */
+.shipping-summary {
+  flex: 1;
+  background: #fff;
+  line-height: 2.0;
+  padding: 32px 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  min-width: 380px;
+  height: 496px;
+}
+.shipping-summary-title {
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+.shipping-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 17px;
+  margin: 10px 0;
+  color: #222;
+}
+.shipping-summary-row .shipping-summary-free {
+  color: #ff7a00;
+  font-weight: 600;
+}
+.shipping-summary-total {
+  font-weight: 700;
+  font-size: 22px;
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-between;
+}
+.shipping-summary-delivery {
+  font-size: 15px;
+  margin: 18px 0 0 0;
+  color: #222;
+}
+.shipping-summary-coupon-row {
+  margin: 18px 0 0 0;
+  position: relative;
+}
+.shipping-summary-coupon-input {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 12px;
+  font-size: 16px;
+}
+.shipping-summary-coupon-icon {
+  position: absolute;
+  right: 16px;
+  top: 13px;
+  color: #a3a3a3;
+  font-size: 22px;
+}
+.shipping-summary-coupon-offer {
+  background: #f4f4f4;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 16px;
+}
+.shipping-summary-coupon-offer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shipping-summary-coupon-offer-code {
+  background: #e6f7ea;
+  color: 'black';
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 2px 8px;
+}
+.shipping-summary-coupon-offer-apply {
+  background: #e6f7ea;
+  color: #28a745;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 2px 14px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.shipping-summary-coupon-offer-desc {
+  color: #28a745;
+  font-weight: 500;
+  font-size: 14px;
+  margin-left: 8px;
+}
+.shipping-summary-coupon-offer-link {
+  margin-top: 6px;
+  text-align: right;
+  color: #007bff;
+  font-size: 13px;
+  text-decoration: none;
+  display: block;
+}
+.shipping-summary-checkout-btn {
+  width: 100%;
+  background: #ff7a00;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 16px 0;
+  border: none;
+  border-radius: 8px;
+  margin-top: 24px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.shipping-summary-checkout-btn:hover {
+  background: #e66a00;
+}
