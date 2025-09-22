@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
-import rakhi from "../assets/rakhi.png";
+import React, { useState } from "react";
+import rakhi from "../assets/profile.jpg";
 import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import axios from "axios";
+
 
 // initial form state
 const initialFormState = {
+  firstName: "",
+  lastName: "",
   displayName: "",
   email: "",
   oldPassword: "",
@@ -21,45 +25,72 @@ const Myaccount = ({ onSubmit }) => {
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
 
+
   // fetch address
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
+        // ✅ Get user_id from localStorage and treat it as session_id
         const userId = localStorage.getItem("user_id");
-        if (!userId) return;
+        console.log("User ID (used as session_id):", userId);
+
+        if (!userId) {
+          console.warn("⚠️ No user_id found in localStorage");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("session_id", userId); // 👈 send userId as session_id
 
         const response = await axios.post(
           "https://jyotisika.in/jyotisika_test/User_Api_Controller/get_delivery_address",
-          { user_id: userId }
+          formData
         );
 
+        console.log("Account address response:", response.data);
+
         if (response.data.status === "success") {
-          setAddresses(response.data.data);
+          setAddresses(response.data.data); // ✅ update state with addresses
+        } else {
+          setAddresses([]);
+          console.warn("⚠️ Address fetch failed:", response.data.message);
         }
       } catch (error) {
         console.error("❌ Error fetching addresses:", error);
+        setAddresses([]);
       }
     };
 
     fetchAddresses();
   }, []);
 
-  // Fetch orders
+
+  //  Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       const userId = localStorage.getItem("user_id");
-      if (!userId) return;
+      if (!userId) {
+        console.warn("⚠️ No user_id found in localStorage");
+        return; // user not logged in
+      }
 
       try {
+        // ✅ Send user_id inside FormData
+        const formData = new FormData();
+        formData.append("user_id", userId);
+
         const response = await axios.post(
-          "https://jyotisika.in/jyotisika_test/User_Api_Controller/showorderedproducts",
-          { user_id: userId }
+          "https://Jyotisika.in/jyotisika_test/User_Api_Controller/showorderedproducts",
+          formData
         );
 
+        console.log("Orders response:", response.data);
+
         if (response.data.status === "success" && response.data.data) {
-          setOrders(response.data.data);
+          setOrders(response.data.data); // ✅ update orders state
         } else {
           setOrders([]);
+          console.warn("⚠️ Orders fetch failed:", response.data.message);
         }
       } catch (error) {
         console.error("❌ Error fetching orders:", error);
@@ -68,34 +99,6 @@ const Myaccount = ({ onSubmit }) => {
     };
 
     fetchOrders();
-  }, []);
-
-  // fetch session info (instead of getuser_info)
-  useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const response = await axios.get(
-          "https://jyotisika.in/jyotisika_test/User_Api_Controller/getSessionData",
-          { withCredentials: true }
-        );
-
-        if (response.data.status === "success" && response.data.session_data) {
-          const session = response.data.session_data;
-
-          setForm({
-            displayName: session.user_name || "",
-            email: session.user_email || "",
-            oldPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          });
-        }
-      } catch (error) {
-        console.error("❌ Error fetching session:", error);
-      }
-    };
-
-    fetchSession();
   }, []);
 
   // handle form input change
@@ -110,8 +113,9 @@ const Myaccount = ({ onSubmit }) => {
   // validate inputs
   const validate = () => {
     const nextErrors = {};
-    if (!form.displayName.trim())
-      nextErrors.displayName = "Customer name is required";
+    if (!form.firstName.trim()) nextErrors.firstName = "First name is required";
+    if (!form.lastName.trim()) nextErrors.lastName = "Last name is required";
+    if (!form.displayName.trim()) nextErrors.displayName = "Display name is required";
 
     if (!form.email.trim()) {
       nextErrors.email = "Email is required";
@@ -119,9 +123,9 @@ const Myaccount = ({ onSubmit }) => {
       nextErrors.email = "Enter a valid email";
     }
 
+    // password validation
     if (form.newPassword || form.confirmPassword || form.oldPassword) {
-      if (!form.oldPassword)
-        nextErrors.oldPassword = "Old password is required";
+      if (!form.oldPassword) nextErrors.oldPassword = "Old password is required";
       if (!form.newPassword) nextErrors.newPassword = "New password is required";
       if (form.newPassword && form.newPassword.length < 8) {
         nextErrors.newPassword = "New password must be at least 8 characters";
@@ -135,25 +139,196 @@ const Myaccount = ({ onSubmit }) => {
     return Object.keys(nextErrors).length === 0;
   };
 
+
+
   // form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
     try {
       setSubmitting(true);
-      const payload = { ...form };
-      if (!form.oldPassword && !form.newPassword && !form.confirmPassword) {
-        delete payload.oldPassword;
-        delete payload.newPassword;
-        delete payload.confirmPassword;
+
+      const userId = localStorage.getItem("user_id");
+      if (!userId) {
+        alert("User not logged in!");
+        return;
       }
-      if (onSubmit) {
-        await onSubmit(payload);
+
+      // Create form-data
+      const formData = new FormData();
+      formData.append("session_id", userId);
+      formData.append("user_name", form.firstName + " " + form.lastName); // required
+      formData.append("user_gender", form.gender || ""); // required, you may add gender input in form
+      formData.append("user_dob", form.dob || ""); // required, you may add DOB input in form
+      formData.append("user_TimeofBirth", form.timeOfBirth || "");
+      formData.append("user_PlaceofBirth", form.placeOfBirth || "");
+      formData.append("user_CurrentAddress", form.address || "");
+      formData.append("user_City", form.city || "");
+      formData.append("user_Pincode", form.pincode || "");
+      formData.append("current_image_name", form.currentImage || ""); // old image path
+
+      if (form.newImage) {
+        formData.append("user_image", form.newImage); // new image file
       }
+
+      // Send POST request to backend
+      const response = await axios.post(
+        "https://hpclsparesportal.in/jyotisika_test/User_Api_Controller/update_userprofile",
+        formData
+      );
+
+      console.log("Update response:", response.data);
+
+      if (response.data.status === "success") {
+        alert("✅ Profile updated successfully!");
+      } else {
+        alert("⚠️ " + (response.data.message || "Failed to update profile"));
+      }
+    } catch (error) {
+      console.error("❌ Error updating profile:", error);
+      alert("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
+
+
+
+  // fetch user details
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userId = localStorage.getItem("user_id"); // frontend stores user_id
+        if (!userId) {
+          console.warn("⚠️ No user_id found in localStorage");
+          return;
+        }
+
+        // ✅ Create form-data with session_id = userId
+        const formData = new FormData();
+        formData.append("session_id", userId);
+
+        const response = await axios.post(
+          "https://Jyotisika.in/jyotisika_test/User_Api_Controller/getuser_info",
+          formData
+        );
+
+        console.log("User info API response:", response.data);
+
+        if (response.data.status === "success" && response.data.data) {
+          const user = response.data.data;
+
+          // ✅ Map API fields to your form structure
+          setForm({
+            firstName: user.user_name?.split(" ")[0] || "",   // take first word from full name
+            lastName: user.user_name?.split(" ")[1] || "",    // second word if available
+            displayName: user.user_name || "",                // full name as displayName
+            email: user.user_email || "",
+            oldPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+          });
+        } else {
+          console.warn("⚠️ User info fetch failed:", response.data.message);
+        }
+      } catch (error) {
+        console.error("❌ Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+
+
+
+  //Update profile and username
+  const [profile, setProfile] = useState({
+    image: rakhi,   // default image
+    name: "User",
+  });
+  const [newImage, setNewImage] = useState(null);
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setNewImage(file); // store new image
+      setProfile((prev) => ({
+        ...prev,
+        image: URL.createObjectURL(file), // preview
+      }));
+    }
+  };
+
+  // When saving/updating profile
+  const handleSaveProfile = async () => {
+    const userId = localStorage.getItem("user_id");
+    if (!userId || !newImage) return;
+
+    const formData = new FormData();
+    formData.append("session_id", userId);
+    formData.append("user_image", newImage);
+
+    try {
+      const response = await axios.post(
+        "https://Jyotisika.in/jyotisika_test/User_Api_Controller/update_user_info",
+        formData
+      );
+
+      if (response.data.status === "success") {
+        alert("Profile updated successfully!");
+        setNewImage(null); // ✅ this hides the save button
+      } else {
+        alert("Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userId = localStorage.getItem("user_id");
+        if (!userId) return;
+
+        const formData = new FormData();
+        formData.append("session_id", userId);
+
+        const response = await axios.post(
+          "https://Jyotisika.in/jyotisika_test/User_Api_Controller/getuser_info",
+          formData
+        );
+
+        if (response.data.status === "success" && response.data.data) {
+          const user = response.data.data;
+
+          setProfile({
+            name: user.user_name || "User",
+            image: user.user_image || rakhi,
+          });
+
+          // Optional: prefill form fields as well
+          setForm((prev) => ({
+            ...prev,
+            firstName: user.user_name?.split(" ")[0] || "",
+            lastName: user.user_name?.split(" ")[1] || "",
+            displayName: user.user_name || "",
+            email: user.user_email || "",
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+
 
   // error renderer
   const renderError = (field) =>
@@ -166,7 +341,7 @@ const Myaccount = ({ onSubmit }) => {
     switch (activeTab) {
       case "account":
         return (
-          <div>
+          <div >
             <div className="p-4 rounded" style={{ backgroundColor: "#fefaea" }}>
               <form onSubmit={handleSubmit} noValidate>
                 <div className="row g-3">
@@ -174,37 +349,58 @@ const Myaccount = ({ onSubmit }) => {
                     <h5 className="fw-semibold mb-3">Account Details</h5>
                   </div>
 
-                  {/* ✅ Customer Name */}
+                  <div className="col-12 col-sm-6">
+                    <label htmlFor="firstName" className="form-label">First name *</label>
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
+                      placeholder="First name"
+                      value={form.firstName}
+                      onChange={handleChange}
+                    />
+                    {renderError("firstName")}
+                  </div>
+
+                  <div className="col-12 col-sm-6">
+                    <label htmlFor="lastName" className="form-label">Last name *</label>
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
+                      placeholder="Last name"
+                      value={form.lastName}
+                      onChange={handleChange}
+                    />
+                    {renderError("lastName")}
+                  </div>
+
                   <div className="col-12">
-                    <label htmlFor="displayName" className="form-label">
-                      Customer Name *
-                    </label>
+                    <label htmlFor="displayName" className="form-label">Display name *</label>
                     <input
                       id="displayName"
                       name="displayName"
                       type="text"
-                      className={`form-control ${
-                        errors.displayName ? "is-invalid" : ""
-                      }`}
-                      placeholder="Customer name"
+                      className={`form-control ${errors.displayName ? "is-invalid" : ""}`}
+                      placeholder="Display name"
                       value={form.displayName}
                       onChange={handleChange}
                     />
+                    <div className="form-text">
+                      This will be how your name will be displayed in the account section and in reviews
+                    </div>
                     {renderError("displayName")}
                   </div>
 
-                  {/* ✅ Email */}
                   <div className="col-12">
-                    <label htmlFor="email" className="form-label">
-                      Email *
-                    </label>
+                    <label htmlFor="email" className="form-label">Email *</label>
                     <input
                       id="email"
                       name="email"
                       type="email"
-                      className={`form-control ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.email ? "is-invalid" : ""}`}
                       placeholder="Email"
                       value={form.email}
                       onChange={handleChange}
@@ -212,23 +408,18 @@ const Myaccount = ({ onSubmit }) => {
                     {renderError("email")}
                   </div>
 
-                  {/* ✅ Password Section */}
                   <div className="col-12">
                     <hr className="my-4" />
                     <h5 className="fw-semibold mb-3">Password</h5>
                   </div>
 
                   <div className="col-12">
-                    <label htmlFor="oldPassword" className="form-label">
-                      Old password
-                    </label>
+                    <label htmlFor="oldPassword" className="form-label">Old password</label>
                     <input
                       id="oldPassword"
                       name="oldPassword"
                       type="password"
-                      className={`form-control ${
-                        errors.oldPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.oldPassword ? "is-invalid" : ""}`}
                       placeholder="Old password"
                       value={form.oldPassword}
                       onChange={handleChange}
@@ -238,16 +429,12 @@ const Myaccount = ({ onSubmit }) => {
                   </div>
 
                   <div className="col-12">
-                    <label htmlFor="newPassword" className="form-label">
-                      New password
-                    </label>
+                    <label htmlFor="newPassword" className="form-label">New password</label>
                     <input
                       id="newPassword"
                       name="newPassword"
                       type="password"
-                      className={`form-control ${
-                        errors.newPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.newPassword ? "is-invalid" : ""}`}
                       placeholder="New password"
                       value={form.newPassword}
                       onChange={handleChange}
@@ -257,19 +444,12 @@ const Myaccount = ({ onSubmit }) => {
                   </div>
 
                   <div className="col-12">
-                    <label
-                      htmlFor="confirmPassword"
-                      className="form-label"
-                    >
-                      Repeat new password
-                    </label>
+                    <label htmlFor="confirmPassword" className="form-label">Repeat new password</label>
                     <input
                       id="confirmPassword"
                       name="confirmPassword"
                       type="password"
-                      className={`form-control ${
-                        errors.confirmPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
                       placeholder="Repeat new password"
                       value={form.confirmPassword}
                       onChange={handleChange}
@@ -281,12 +461,7 @@ const Myaccount = ({ onSubmit }) => {
                   <div className="col-12">
                     <hr className="my-4" />
                     <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3">
-                      <button
-                        type="submit"
-                        className="btn"
-                        disabled={submitting}
-                        style={{ backgroundColor: "#fd8b07" }}
-                      >
+                      <button type="submit" className="btn" disabled={submitting} style={{ backgroundColor: "#fd8b07" }}>
                         Save changes
                       </button>
                     </div>
@@ -296,6 +471,7 @@ const Myaccount = ({ onSubmit }) => {
             </div>
           </div>
         );
+
 
       case "address":
         return (
@@ -333,16 +509,12 @@ const Myaccount = ({ onSubmit }) => {
             </div>
           </div>
         );
-
       case "orders":
         return (
           <div className="container mt-4">
             <h3 className="mb-4">Order History</h3>
             {orders.length > 0 ? (
-              <table
-                className="table table-striped"
-                style={{ backgroundColor: "#fefaea" }}
-              >
+              <table className="table table-striped" style={{ backgroundColor: "#fefaea" }}>
                 <thead>
                   <tr>
                     <th>#</th>
@@ -373,38 +545,42 @@ const Myaccount = ({ onSubmit }) => {
             )}
           </div>
         );
-
       case "wishlist":
-        return (
-          <div>
-            <h3>Your Wishlist</h3>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>
-                    <Link to="/product" className="btn btn-dark">
-                      {" "}
-                      Add to cart
-                    </Link>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </div>
-        );
+        return <div><h3>Your Wishlist</h3>
+          <Table
+          >
+            <thead>
+              <tr>
+                <th>
+                  Product
+                </th>
+                <th>
+                  Price
+                </th>
+                <th>
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
 
+                <td>
+                  Mark
+                </td>
+                <td>
+                  Otto
+                </td>
+                <td>
+                  <Link to="/product" className="btn btn-dark" > Add to cart</Link>
+                </td>
+              </tr>
+
+            </tbody>
+          </Table></div>;
       case "logout":
-        return <div><h3>Log out</h3></div>;
-
+        return <div><h3>log out</h3>
+        <button className="btn btn-secondary">Log Out</button></div>;
       default:
         return <h3>Welcome to My Account</h3>;
     }
@@ -412,76 +588,101 @@ const Myaccount = ({ onSubmit }) => {
 
   return (
     <div style={{ backgroundColor: "#fefaea" }}>
-      <div className="container-fluid px-3 px-md-4 pb-5">
+      <div className="container-fluid px-3 px-md-4 pb-5 ">
         <div className="row g-4">
           <h1 className="display-4 fw-bold text-center ">My Account</h1>
           {/* Sidebar */}
-          <div className="col-12 col-lg-3 ">
-            <div
-              className="bg-light p-4 rounded"
-              style={{ minHeight: "600px" }}
-            >
-              <div className="text-center">
+          <div className="col-12 col-lg-3 text-center">
+            <div className="bg-light p-4 rounded" style={{ minHeight: "600px" }}>
+              <div className="position-relative d-inline-block">
                 <img
-                  src={rakhi}
+                  src={profile.image}
                   alt="Profile"
-                  className="rounded-circle mb-3"
-                  style={{
-                    height: "120px",
-                    width: "120px",
-                    objectFit: "cover",
-                  }}
+                  className="rounded-circle mb-2"
+                  style={{ height: "120px", width: "120px", objectFit: "cover" }}
                 />
-                <h4 className="mb-4">User</h4>
+
+                <label
+                  htmlFor="profileImageInput"
+                  className="position-absolute d-flex justify-content-center align-items-center"
+                  style={{
+                    top: "0",
+                    right: "0",
+                    backgroundColor: "#000",
+                    color: "#fff",
+                    borderRadius: "50%",
+                    width: "35px",
+                    height: "35px",
+                    cursor: "pointer",
+                    border: "2px solid #fff",
+                    marginTop:"90px",
+                    marginRight:"45px",
+                    transform: "translate(50%, -50%)",
+                  }}
+                >
+                  <i className="bi bi-camera"></i>
+                </label>
+
+                <input
+                  id="profileImageInput"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleImageChange}
+                />
+
+                <h4 className="mt-2">{profile.name}</h4>
+
+                {/* Save button to upload the new image */}
+                {newImage && (
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={handleSaveProfile}  // triggers upload
+                  >
+                    Save Profile Image
+                  </button>
+                )}
               </div>
+
+
               <div className=" list-group-flush">
                 <button
-                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${
-                    activeTab === "account" ? "fw-bold" : ""
-                  }`}
+                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${activeTab === "account" ? "fw-bold" : ""}`}
                   onClick={() => setActiveTab("account")}
                 >
                   Account
                 </button>
                 <hr />
                 <button
-                  className={`list-group-item bg-transparent border-0 px-0  m-2 ${
-                    activeTab === "address" ? "fw-bold" : ""
-                  }`}
+                  className={`list-group-item bg-transparent border-0 px-0  m-2 ${activeTab === "address" ? "fw-bold" : ""}`}
                   onClick={() => setActiveTab("address")}
                 >
                   Address
                 </button>
                 <button
-                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${
-                    activeTab === "orders" ? "fw-bold" : ""
-                  }`}
+                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${activeTab === "orders" ? "fw-bold" : ""}`}
                   onClick={() => setActiveTab("orders")}
                 >
                   Orders
                 </button>
                 <button
-                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${
-                    activeTab === "wishlist" ? "fw-bold" : ""
-                  }`}
+                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${activeTab === "wishlist" ? "fw-bold" : ""}`}
                   onClick={() => setActiveTab("wishlist")}
                 >
                   Wishlist
                 </button>
-                <button
-                  className={`list-group-item bg-transparent border-0 px-0 m-2 ${
-                    activeTab === "logout" ? "fw-bold" : ""
-                  }`}
-                  onClick={() => setActiveTab("logout")}
-                >
-                  Log out
+                <button className={`list-group-item bg-transparent border-0 px-0 m-2 ${activeTab === "logout" ? "fw-bold" : ""}`}
+                  onClick={() => setActiveTab("logout")}>Log out
+
                 </button>
               </div>
             </div>
           </div>
 
           {/* Content Area */}
-          <div className="col-12 col-lg-9">{renderContent()}</div>
+          <div className="col-12 col-lg-9">
+            {renderContent()}
+          </div>
         </div>
       </div>
     </div>
@@ -489,3 +690,5 @@ const Myaccount = ({ onSubmit }) => {
 };
 
 export default Myaccount;
+
+
