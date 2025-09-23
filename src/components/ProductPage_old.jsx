@@ -486,6 +486,11 @@ export default function ProductPage({ setCartCount, cartCount }) {
         <div className="product-info-section">
           <h1 className="product-title">{product.product_name}</h1>
 
+          <div className="watching-now">
+            <Eye size={16} />
+            <span>{watchingCount}+ watching now</span>
+            <span className="sale-tag">— <Target size={14} /> Freedom Sale! Extra 25% OFF Included*</span>
+          </div>
 
           {/* Bead Selection Images */}
           <div className="bead-selection">
@@ -519,19 +524,9 @@ export default function ProductPage({ setCartCount, cartCount }) {
           {/* Quantity Section */}
           
 
-          {/* Price with Discount % */}
-          <div className="price-section" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            {product.product_price && Number(product.product_price) > Number(selectedOption.price) && (
-              <span style={{ textDecoration: "line-through", color: "#888", fontSize: "26px", marginRight: "8px" }}>
-                ₹{Number(product.product_price).toLocaleString()}
-              </span>
-            )}
+          {/* Price */}
+          <div className="price-section">
             <div className="current-price">₹{selectedOption.price.toLocaleString()}</div>
-            {product.product_price && Number(product.product_price) > Number(selectedOption.price) && (
-              <span style={{ color: "green", fontWeight: 600, fontSize: "16px" }}>
-                {`(${Math.round(((Number(product.product_price) - Number(selectedOption.price)) / Number(product.product_price)) * 100)}% OFF)`}
-              </span>
-            )}
           </div>
 
           {/* Add to Cart Button */}
