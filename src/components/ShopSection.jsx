@@ -10,7 +10,7 @@ import { useApiData } from "../ApiContext";
 const BASE_URL = "https://jyotisika.in/jyotisika_test/User_Api_Controller";
 
 const ShopSection = ({ setCartCount, cartCount }) => {
-    const { latestApiData } = useApiData();
+const { latestApiData = {} } = useApiData() || {};
 
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
