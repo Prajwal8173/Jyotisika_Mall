@@ -47,10 +47,10 @@ function App() {
 
           element={
             <>
-              <Home setCartCount={setCartCount} cartCount={cartCount}/>
+              <Home setCartCount={setCartCount} cartCount={cartCount} />
               <HeroBanner />
               <div style={{ backgroundColor: "#fefaea", }}>
-                <ShopSection setCartCount={setCartCount} cartCount={cartCount}/>
+                <ShopSection setCartCount={setCartCount} cartCount={cartCount} />
               </div>
               <ProductFooter />
 
@@ -77,8 +77,8 @@ function App() {
           path="/shop"
           element={
             <>
-              <Home setCartCount={setCartCount} cartCount={cartCount}/>
-              <ShopSection />
+              <Home setCartCount={setCartCount} cartCount={cartCount} />
+              <ShopSection setCartCount={setCartCount} cartCount={cartCount} />
               <ProductFooter />
             </>
           }
@@ -87,7 +87,7 @@ function App() {
         {/* second  shopping page */}
         <Route path="/shop" element={<>
           <Shoppage />
-          < ShopSection />
+          < ShopSection setCartCount={setCartCount} cartCount={cartCount}/>
           <ProductFooter />
         </>} />
         {/* User authentication */}
@@ -98,8 +98,8 @@ function App() {
           path="/product/:id"
           element={
             <>
-              <Home setCartCount={setCartCount} cartCount={cartCount}/>
-              <ProductPage setCartCount={setCartCount} cartCount={cartCount}/>
+              <Home setCartCount={setCartCount} cartCount={cartCount} />
+              <ProductPage setCartCount={setCartCount} cartCount={cartCount} />
               {/* <Footer /> */}
               <ProductFooter />
             </>
@@ -110,23 +110,23 @@ function App() {
         <Route
           path="/cart/:id" element={
             <>
-              <Home setCartCount={setCartCount} cartCount={cartCount}/>
-              <CartPage  setCartCount={setCartCount} cartCount={cartCount} />
-              <Footer />
+              <Home setCartCount={setCartCount} cartCount={cartCount} />
+              <CartPage setCartCount={setCartCount} cartCount={cartCount} />
+              <ProductFooter />
             </>
           } />
 
 
         {/* Address page */}
 
-        <Route path="/address" element={<><Home setCartCount={setCartCount} cartCount={cartCount}/><AddressPage /></>} />
+        <Route path="/address" element={<><Home setCartCount={setCartCount} cartCount={cartCount} /><AddressPage /></>} />
         {/* Shipping page */}
-        <Route path="/shipping" element={<><Home setCartCount={setCartCount} cartCount={cartCount}/><ShippingPage /></>} />
+        <Route path="/shipping" element={<><Home setCartCount={setCartCount} cartCount={cartCount} /><ShippingPage /></>} />
         {/* Payment page */}
-        <Route path="/payment" element={<><Home setCartCount={setCartCount} cartCount={cartCount}/><Payment /></>} />
+        <Route path="/payment" element={<><Home setCartCount={setCartCount} cartCount={cartCount} /><Payment /></>} />
 
       </Routes>
-    </Router>
+    </Router> 
   );
 }
 

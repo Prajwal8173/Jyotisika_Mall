@@ -11,6 +11,28 @@ const ReviewsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [displayCount, setDisplayCount] = useState(12); // Initial number of reviews to show
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  // Handle window resize for responsive columns
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
+
+  // Get responsive column count
+  const getColumnCount = () => {
+    if (windowWidth > 1200) return '4';
+    if (windowWidth > 992) return '3';
+    if (windowWidth > 768) return '2';
+    if (windowWidth > 480) return '2';
+    return '1';
+  };
 
   const fetchReviewsData = async () => {
     try {
@@ -91,9 +113,15 @@ const ReviewsPage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        padding: windowWidth <= 480 ? '20px' : '40px 20px',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '18px', color: '#6b7280' }}>Loading reviews...</div>
+          <div style={{ 
+            fontSize: windowWidth <= 480 ? '16px' : '18px', 
+            color: '#6b7280' 
+          }}>
+            Loading reviews...
+          </div>
         </div>
       </div>
     );
@@ -108,18 +136,25 @@ const ReviewsPage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        padding: windowWidth <= 480 ? '20px' : '40px 20px',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '18px', color: '#ef4444', marginBottom: '16px' }}>{error}</div>
+          <div style={{ 
+            fontSize: windowWidth <= 480 ? '16px' : '18px', 
+            color: '#ef4444', 
+            marginBottom: '16px' 
+          }}>
+            {error}
+          </div>
           <button 
             onClick={fetchReviewsData}
             style={{
               background: '#ea580c',
               color: 'white',
-              padding: '12px 24px',
+              padding: windowWidth <= 480 ? '10px 20px' : '12px 24px',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '14px',
+              fontSize: windowWidth <= 480 ? '12px' : '14px',
               fontWeight: '600',
               cursor: 'pointer',
             }}
@@ -138,9 +173,9 @@ const ReviewsPage = () => {
     <div style={{
       minHeight: '100vh',
       background: '#FFF2D6',
-      padding: '40px 20px',
+      padding: windowWidth <= 480 ? '20px 12px' : windowWidth <= 768 ? '30px 16px' : '40px 20px',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      marginTop: '40px',
+      marginTop: windowWidth <= 480 ? '20px' : '40px',
     }}>
       <div style={{
         maxWidth: '1200px',
@@ -149,49 +184,56 @@ const ReviewsPage = () => {
         {/* Header */}
         <div style={{
           textAlign: 'center',
-          marginBottom: '40px',
+          marginBottom: windowWidth <= 480 ? '24px' : windowWidth <= 768 ? '32px' : '40px',
         }}>
           <h1 style={{
-            fontSize: '42px',
+            fontSize: windowWidth <= 480 ? '24px' : windowWidth <= 768 ? '32px' : windowWidth <= 992 ? '36px' : '42px',
             fontWeight: '700',
             color: '#1f2937',
             marginBottom: '12px',
             position: 'relative',
             display: 'inline-block',
             margin: '0 0 12px 0',
+            lineHeight: '1.2',
           }}>
-            <img
-              src={leftFlower}
-              alt="Left Flower"
-              style={{
-                position: 'absolute',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '50px',
-                objectFit: 'contain',
-                left: '-50px',
-              }}
-            />
+            {windowWidth > 768 && (
+              <img
+                src={leftFlower}
+                alt="Left Flower"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: windowWidth <= 992 ? '30px' : '40px',
+                  height: windowWidth <= 992 ? '38px' : '50px',
+                  objectFit: 'contain',
+                  left: windowWidth <= 992 ? '-40px' : '-50px',
+                }}
+              />
+            )}
             {reviews.length}+ Honest Reviews
-            <img
-              src={rightFlower}
-              alt="Right Flower"
-              style={{
-                position: 'absolute',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '40px',
-                height: '50px',
-                objectFit: 'contain',
-                right: '-50px',
-              }}
-            />
+            {windowWidth > 768 && (
+              <img
+                src={rightFlower}
+                alt="Right Flower"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: windowWidth <= 992 ? '30px' : '40px',
+                  height: windowWidth <= 992 ? '38px' : '50px',
+                  objectFit: 'contain',
+                  right: windowWidth <= 992 ? '-40px' : '-50px',
+                }}
+              />
+            )}
           </h1>
           <div style={{
-            fontSize: '16px',
+            fontSize: windowWidth <= 480 ? '13px' : windowWidth <= 768 ? '14px' : '16px',
             color: '#6b7280',
-            marginBottom: '40px',
+            marginBottom: windowWidth <= 480 ? '24px' : '40px',
+            lineHeight: '1.4',
+            padding: windowWidth <= 480 ? '0 10px' : '0',
           }}>
             Here is why 1,500,000+ men switched to <strong>BASED</strong>
           </div>
@@ -202,10 +244,12 @@ const ReviewsPage = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '30px',
+          marginBottom: windowWidth <= 480 ? '20px' : '30px',
+          flexDirection: windowWidth <= 480 ? 'column' : 'row',
+          gap: windowWidth <= 480 ? '12px' : '0',
         }}>
           <div style={{
-            fontSize: '16px',
+            fontSize: windowWidth <= 480 ? '14px' : '16px',
             fontWeight: '500',
             color: '#6b7280',
           }}>
@@ -214,10 +258,10 @@ const ReviewsPage = () => {
           <button style={{
             background: '#ea580c',
             color: 'white',
-            padding: '12px 24px',
+            padding: windowWidth <= 480 ? '10px 20px' : '12px 24px',
             border: 'none',
             borderRadius: '8px',
-            fontSize: '14px',
+            fontSize: windowWidth <= 480 ? '12px' : '14px',
             fontWeight: '600',
             cursor: 'pointer',
             transition: 'background-color 0.2s',
@@ -228,8 +272,8 @@ const ReviewsPage = () => {
 
         {/* Reviews Masonry Grid */}
         <div style={{
-          columns: window.innerWidth > 768 ? '4' : window.innerWidth > 480 ? '4' : '3',
-          columnGap: '10px',
+          columns: getColumnCount(),
+          columnGap: windowWidth <= 480 ? '8px' : windowWidth <= 768 ? '12px' : '16px',
           columnFill: 'balance',
         }}>
           {displayedReviews.map((review) => (
@@ -239,9 +283,10 @@ const ReviewsPage = () => {
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
               border: '1px solid #e5e7eb',
               breakInside: 'avoid',
-              marginBottom: '16px',
+              marginBottom: windowWidth <= 480 ? '12px' : '16px',
               display: 'inline-block',
               width: '100%',
+              borderRadius: '8px',
             }}>
               {/* Review Image */}
               {review.image && (
@@ -253,8 +298,8 @@ const ReviewsPage = () => {
                       width: '100%',
                       height: 'auto',
                       display: 'block',
-                      minHeight: '150px',
-                      maxHeight: '300px',
+                      minHeight: windowWidth <= 480 ? '120px' : '150px',
+                      maxHeight: windowWidth <= 480 ? '200px' : windowWidth <= 768 ? '250px' : '300px',
                       objectFit: 'cover',
                     }}
                     onError={(e) => {
@@ -269,8 +314,8 @@ const ReviewsPage = () => {
                       transform: 'translate(-50%, -50%)',
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       borderRadius: '50%',
-                      width: '50px',
-                      height: '50px',
+                      width: windowWidth <= 480 ? '40px' : '50px',
+                      height: windowWidth <= 480 ? '40px' : '50px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -283,7 +328,9 @@ const ReviewsPage = () => {
                 </div>
               )}
 
-              <div style={{ padding: '16px' }}>
+              <div style={{ 
+                padding: windowWidth <= 480 ? '12px' : '16px' 
+              }}>
                 {/* User Info */}
                 <div style={{
                   display: 'flex',
@@ -295,13 +342,15 @@ const ReviewsPage = () => {
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
+                      gap: windowWidth <= 480 ? '6px' : '8px',
                       marginBottom: '4px',
+                      flexWrap: 'wrap',
                     }}>
                       <span style={{
-                        fontSize: '15px',
+                        fontSize: windowWidth <= 480 ? '13px' : '15px',
                         fontWeight: '600',
                         color: '#111827',
+                        wordBreak: 'break-word',
                       }}>
                         {review.name}
                       </span>
@@ -313,10 +362,11 @@ const ReviewsPage = () => {
                           backgroundColor: '#dcfce7',
                           padding: '2px 6px',
                           borderRadius: '10px',
+                          flexShrink: 0,
                         }}>
                           <CheckIcon />
                           <span style={{
-                            fontSize: '11px',
+                            fontSize: windowWidth <= 480 ? '9px' : '11px',
                             color: '#16a34a',
                             fontWeight: '500',
                           }}>
@@ -326,7 +376,7 @@ const ReviewsPage = () => {
                       )}
                     </div>
                     <div style={{
-                      fontSize: '13px',
+                      fontSize: windowWidth <= 480 ? '11px' : '13px',
                       color: '#6b7280',
                     }}>
                       {review.date}
@@ -335,15 +385,18 @@ const ReviewsPage = () => {
                 </div>
 
                 {/* Star Rating */}
-                <StarRating rating={review.rating} />
+                <div style={{ marginBottom: '8px' }}>
+                  <StarRating rating={review.rating} />
+                </div>
 
                 {/* Review Text */}
                 <p style={{
-                  fontSize: '14px',
+                  fontSize: windowWidth <= 480 ? '12px' : '14px',
                   lineHeight: '1.4',
                   color: '#374151',
                   marginBottom: '12px',
                   margin: '0 0 12px 0',
+                  wordBreak: 'break-word',
                 }}>
                   {review.text}
                 </p>
@@ -351,12 +404,14 @@ const ReviewsPage = () => {
                 {/* Item Type */}
                 {review.itemType && (
                   <div style={{
-                    fontSize: '12px',
+                    fontSize: windowWidth <= 480 ? '10px' : '12px',
                     color: '#6b7280',
                     backgroundColor: '#f9fafb',
-                    padding: '4px 10px',
+                    padding: windowWidth <= 480 ? '3px 8px' : '4px 10px',
                     borderRadius: '14px',
                     display: 'inline-block',
+                    wordBreak: 'break-word',
+                    maxWidth: '100%',
                   }}>
                     Item type: {review.itemType}
                   </div>
@@ -368,16 +423,19 @@ const ReviewsPage = () => {
 
         {/* Show More/Less Button */}
         {reviews.length > 12 && (
-          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <div style={{ 
+            textAlign: 'center', 
+            marginTop: windowWidth <= 480 ? '30px' : '40px' 
+          }}>
             <button 
               onClick={displayCount === 12 ? handleShowMore : handleShowLess}
               style={{
                 background: '#ea580c',
                 color: 'white',
-                padding: '14px 32px',
+                padding: windowWidth <= 480 ? '12px 24px' : '14px 32px',
                 border: 'none',
                 borderRadius: '8px',
-                fontSize: '16px',
+                fontSize: windowWidth <= 480 ? '14px' : '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 transition: 'background-color 0.2s',

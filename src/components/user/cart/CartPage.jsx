@@ -114,7 +114,11 @@ const CartPage = ({ setCartCount, cartCount }) => {
     payload.append("product_id", item.product_id);
 
     try {
-      await axios.post(`${BASE_URL}/deleteproductfromcart`, payload);
+      const res = await axios.post(`${BASE_URL}/deleteproductfromcart`, payload);
+      if (res?.data?.status) {
+        setCartCount(cartCount - 1);
+      }
+
     } catch (error) {
       console.error("Delete error:", error);
       fetchCart(); // fallback
@@ -177,7 +181,7 @@ const CartPage = ({ setCartCount, cartCount }) => {
                 imageArray && imageArray.length > 0 ? imageArray[0] : null;
 
               return (
-                <div key={item.product_id} className="cart-item">
+                <div key={item.product_id} className="cart-item" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <img
                     src={
                       firstImage
@@ -185,8 +189,9 @@ const CartPage = ({ setCartCount, cartCount }) => {
                         : ""
                     }
                     alt={item.product_name}
+                    style={{ width: "80px", height: "80px", objectFit: "cover", marginRight: "16px" }}
                   />
-                  <div>
+                  <div style={{ flex: 1 }}>
                     <h3>{item.product_name}</h3>
                     <p>
                       Category{" "}
@@ -208,15 +213,19 @@ const CartPage = ({ setCartCount, cartCount }) => {
                       <button onClick={() => handleIncrement(item)}>+</button>
                     </div>
                   </div>
+                  <button
+                    className="remove-btn"
+                    style={{ marginLeft: "16px", background: "orange", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer" }}
+                    onClick={() => handleRemove(item)}
+                  >
+                    Remove
+                  </button>
                 </div>
               );
             })
           )}
           {/* Discount Banner */}
-          <div className="discount-banner">
-            <FaTag style={{ color: "#ff7a00" }} />
-            10% Instant Discount with Federal Bank Debit Cards on a min spend of ₹150. T&C Apply
-          </div>
+
         </div>
 
         {/* Right: Order Summary */}

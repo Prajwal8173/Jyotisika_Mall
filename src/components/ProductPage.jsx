@@ -452,10 +452,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
   return (
     <div className="product-page">
       {/* Discount Banner */}
-      <div className="discount-banner">
-        <Package size={16} /> ADD 3 ITEMS TO CART TO UNLOCK DISCOUNT
-      </div>
-
+      <hr />
       {message && <div className="alert alert-info text-center">{message}</div>}
 
       {/* Product Info */}
@@ -525,7 +522,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
           </div>
 
           {/* Quantity Section */}
-
+          
 
           {/* Price */}
           <div className="price-section">
