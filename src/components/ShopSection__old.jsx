@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FilterSection from "./FilterSection";
 import "../styles/shoppingpage.css";
-import { Helmet } from "react-helmet";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test/User_Api_Controller";
 
@@ -78,14 +77,12 @@ const ShopSection = ({ setCartCount, cartCount }) => {
       });
     }
 
-    // Always sort by newest first (latest products first)
-    updated.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    // If user selects price sort, override
     if (sortBy === "price-asc") {
       updated.sort((a, b) => a.discount_price - b.discount_price);
     } else if (sortBy === "price-desc") {
       updated.sort((a, b) => b.discount_price - a.discount_price);
+    } else if (sortBy === "new") {
+      updated.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }
 
     setFiltered(updated);
@@ -156,9 +153,6 @@ const ShopSection = ({ setCartCount, cartCount }) => {
         color: "#6D1D11",
       }}
     >
-    <Helmet>
-        <title>Jyotisika Mall | Shop</title>
-    </Helmet>
       <div className="w-100">
         {/* ✅ Filters */}
         <FilterSection
@@ -308,11 +302,6 @@ const ShopSection = ({ setCartCount, cartCount }) => {
                             <del className="ms-2" style={{ fontSize: "12px" }}>
                               ₹{product.product_price}
                             </del>
-                          )}
-                          {product.product_price && Number(product.product_price) > Number(product.discount_price) && (
-                            <span style={{ color: "green", fontWeight: 600, fontSize: "12px", marginLeft: "6px" }}>
-                              {`(${Math.round(((Number(product.product_price) - Number(product.discount_price)) / Number(product.product_price)) * 100)}% OFF)`}
-                            </span>
                           )}
                         </div>
 
