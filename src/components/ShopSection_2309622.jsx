@@ -5,13 +5,10 @@ import axios from "axios";
 import FilterSection from "./FilterSection";
 import "../styles/shoppingpage.css";
 import { Helmet } from "react-helmet";
-import { useApiData } from "../ApiContext";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test/User_Api_Controller";
 
 const ShopSection = ({ setCartCount, cartCount }) => {
-    const { latestApiData } = useApiData();
-
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -52,12 +49,7 @@ const ShopSection = ({ setCartCount, cartCount }) => {
       .catch((err) => console.error("Error fetching products:", err))
       .finally(() => setLoading(false));
   }, [selectedCategory]);
-useEffect(() => {
-    const apiUrl = `${BASE_URL}/getproduct`;
-    if (latestApiData[apiUrl]?.status === "success") {
-      setProducts(latestApiData[apiUrl].data);
-    }
-  }, [latestApiData]);
+
   // ✅ Apply filters
   useEffect(() => {
     let updated = [...products];
