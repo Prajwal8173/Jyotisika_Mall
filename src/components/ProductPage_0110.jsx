@@ -9,7 +9,6 @@ import des2 from '../assets/img2.png'
 import des3 from '../assets/img3.png'
 import des4 from '../assets/img4.png'
 import { FaLeaf, FaTree } from "react-icons/fa";
-import { Helmet } from "react-helmet";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test";
 
@@ -59,6 +58,8 @@ const TopShopseller = ({ topProducts, onProductSelect, getImageUrl }) => {
     viewAllBtn: { backgroundColor: "#fbbf24", color: "white", border: "none", padding: "12px 32px", borderRadius: "8px", fontSize: "16px", fontWeight: 600, cursor: "pointer", display: "block", margin: "0 auto" },
   };
 
+  console.log("TopShopseller received products:", topProducts);
+
   if (!topProducts || topProducts.length === 0) {
     return (
       <section style={styles.container}>
@@ -70,9 +71,6 @@ const TopShopseller = ({ topProducts, onProductSelect, getImageUrl }) => {
 
   return (
     <section style={styles.container}>
-      <Helmet>
-        <title>Product Page - Jyotisika</title>
-      </Helmet>
       <h2 style={styles.title}>Top Shopseller</h2>
       <div style={styles.carouselWrapper}>
         <button style={{ ...styles.navButton, ...styles.navButtonLeft }} onClick={() => scrollTo("left")}>
@@ -80,8 +78,14 @@ const TopShopseller = ({ topProducts, onProductSelect, getImageUrl }) => {
         </button>
         <div ref={carouselRef} style={styles.carousel}>
           {topProducts.map((product) => {
+            console.log("Processing product in carousel:", product);
+
+            // Handle product image - it's now an array from the filtered data
             const imageArray = product.product_image || [];
-            if (!imageArray || imageArray.length === 0) return null;
+
+            if (!imageArray || imageArray.length === 0) {
+              return null;
+            }
 
             return (
               <div
@@ -96,6 +100,7 @@ const TopShopseller = ({ topProducts, onProductSelect, getImageUrl }) => {
                   alt={product.product_name}
                   style={styles.image}
                   onError={(e) => {
+                    console.log("Image load error for:", e.target.src);
                     e.target.style.display = 'none';
                   }}
                 />
@@ -139,17 +144,24 @@ export default function ProductPage({ setCartCount, cartCount }) {
   const [currentReview, setCurrentReview] = useState(0);
   const [cartQty, setCartQty] = useState(0);
   const [message, setMessage] = useState("");
-  const [selectedBeadOption, setSelectedBeadOption] = useState("");
+  const [selectedBeadOption, setSelectedBeadOption] = useState("54");
   const [quantity, setQuantity] = useState(1);
   const [watchingCount, setWatchingCount] = useState(1942);
   const [inCart, setInCart] = useState(false);
   const [totalReviews, setTotalReviews] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [beadOptions, setBeadOptions] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
 
   const getImageUrl = (img) => img ? `${BASE_URL}/uploads/products/${img}` : null;
+
+  // Initialize bead options with default prices
+  const [beadOptions, setBeadOptions] = useState([
+    { id: "54", label: "54 BEADS", price: 0, selected: true },
+    { id: "72", label: "72 BEADS", price: 0, selected: false },
+    { id: "108", label: "108 BEADS", price: 0, selected: false }
+  ]);
+
+  const [selectedOption, setSelectedOption] = useState(beadOptions[0]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,11 +180,10 @@ export default function ProductPage({ setCartCount, cartCount }) {
         console.log("Product API response:", productResponse.data);
 
         if (productResponse.data.status === "success" && productResponse.data.data && productResponse.data.data.length > 0) {
-          const allProductData = productResponse.data.data;
-          const prod = allProductData[0];
-          console.log("All product data:", allProductData);
+          const prod = productResponse.data.data[0];
+          console.log("Product data:", prod);
 
-          // Handle product images
+          // Handle product images - they come as JSON string from API
           if (prod.product_image) {
             try {
               prod.product_image = JSON.parse(prod.product_image);
@@ -186,58 +197,16 @@ export default function ProductPage({ setCartCount, cartCount }) {
 
           setProduct(prod);
 
-          // Build bead options dynamically from API data
-          const dynamicBeadOptions = allProductData.map((item, index) => {
-            // Check if category-based pricing exists
-            const hasCategoryPricing = item.category_id !== null && item.sub_category_name !== null;
-            
-            if (hasCategoryPricing) {
-              // Use category-based pricing
-              const subCategoryName = item.sub_category_name || "";
-              const discountPrice = Number(item.category_discount_price) || 0;
-              const originalPrice = Number(item.original_price) || Number(item.product_price) || 0;
-              
-              // Create label from sub_category_name
-              let beadLabel = subCategoryName.toUpperCase();
-              if (!beadLabel.includes("BEADS") && !beadLabel.includes("MM")) {
-                beadLabel = `${beadLabel} BEADS`;
-              } else if (beadLabel.includes("MM")) {
-                beadLabel = `${beadLabel} BEADS`;
-              }
-              
-              return {
-                id: item.category_id,
-                label: beadLabel,
-                price: discountPrice > 0 ? discountPrice : originalPrice,
-                originalPrice: originalPrice,
-                selected: index === 0,
-                categoryId: item.category_id,
-                subCategoryName: item.sub_category_name
-              };
-            } else {
-              // No category pricing - use product-level pricing only
-              const discountPrice = Number(item.discount_price) || 0;
-              const originalPrice = Number(item.product_price) || 0;
-              
-              return {
-                id: `default_${item.product_id}`,
-                label: "STANDARD",
-                price: discountPrice > 0 ? discountPrice : originalPrice,
-                originalPrice: originalPrice > discountPrice ? originalPrice : null,
-                selected: true,
-                categoryId: null,
-                subCategoryName: null
-              };
-            }
-          });
+          // Update bead options with actual product prices
+          const basePrice = Number(prod.discount_price) || Number(prod.product_price) || 0;
+          const updatedBeadOptions = [
+            { id: "54", label: "54 BEADS", price: basePrice, selected: true },
+            { id: "72", label: "72 BEADS", price: Math.round(basePrice * 1.35), selected: false },
+            { id: "108", label: "108 BEADS", price: Math.round(basePrice * 1.68), selected: false }
+          ];
 
-          console.log("Dynamic bead options:", dynamicBeadOptions);
-          setBeadOptions(dynamicBeadOptions);
-          
-          if (dynamicBeadOptions.length > 0) {
-            setSelectedOption(dynamicBeadOptions[0]);
-            setSelectedBeadOption(dynamicBeadOptions[0].id);
-          }
+          setBeadOptions(updatedBeadOptions);
+          setSelectedOption(updatedBeadOptions[0]);
 
           // Check if product is in cart
           const userId = localStorage.getItem("user_id");
@@ -255,21 +224,26 @@ export default function ProductPage({ setCartCount, cartCount }) {
           console.log("Top products API response:", topProductsResponse.data);
 
           if (topProductsResponse.data.status === "success" && topProductsResponse.data.data) {
+            // Filter out null products and handle product_image parsing
             const validProducts = topProductsResponse.data.data
               .filter(product => product.product_id !== null && product.product_name !== null)
               .map(product => {
+                // Parse product_image JSON string
                 if (product.product_image && typeof product.product_image === 'string') {
                   try {
                     product.product_image = JSON.parse(product.product_image);
                   } catch (e) {
+                    console.log("Could not parse product_image as JSON:", product.product_image);
                     product.product_image = [product.product_image];
                   }
                 }
                 return product;
               });
 
+            console.log("Setting filtered top products:", validProducts);
             setTopProducts(validProducts);
           } else {
+            console.log("No top products data");
             setTopProducts([]);
           }
         } catch (topProductsError) {
@@ -277,7 +251,13 @@ export default function ProductPage({ setCartCount, cartCount }) {
           setTopProducts([]);
         }
 
-        // 3. Fetch specific product feedback
+        // 3. Skip general feedback for now due to API error
+        console.log("Skipping general product feedback due to API category error");
+        setReviews([]);
+        setTotalReviews(0);
+        setAverageRating(0);
+
+        // 4. Fetch specific product feedback
         console.log("Fetching specific product feedback...");
         try {
           const specificFeedbackResponse = await axios.post(`${BASE_URL}/User_Api_Controller/show_product_feedback`, productFormData);
@@ -285,6 +265,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
 
           if (specificFeedbackResponse.data.status === "success" && specificFeedbackResponse.data.data) {
             setProductReviews(specificFeedbackResponse.data.data);
+            // Use specific product reviews for the main reviews display
             setReviews(specificFeedbackResponse.data.data);
             setTotalReviews(specificFeedbackResponse.data.data.length);
 
@@ -297,7 +278,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
           console.error("Error fetching specific feedback:", specificFeedbackError);
         }
 
-        // 4. Get average rating for this specific product
+        // 5. Get average rating for this specific product
         console.log("Fetching product average rating...");
         try {
           const avgRatingResponse = await axios.post(`${BASE_URL}/User_Api_Controller/get_avg_rating_of_product`, productFormData);
@@ -328,6 +309,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
       behavior: "smooth"
     });
   }, []);
+
 
   const checkProductInCart = async (productId, userId) => {
     try {
@@ -382,12 +364,6 @@ export default function ProductPage({ setCartCount, cartCount }) {
       return;
     }
 
-    if (!selectedOption) {
-      setMessage("Please select a bead option");
-      setTimeout(() => setMessage(""), 3000);
-      return;
-    }
-
     const payload = new FormData();
     payload.append("product_id", product.product_id);
     payload.append("product_price", selectedOption.price);
@@ -401,7 +377,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
       if (res.data.status === "success") {
         setInCart(true);
         setCartQty(quantity);
-        setCartCount(cartCount + 1);
+        setCartCount(cartCount+1)
         setMessage("Added to cart successfully!");
       } else {
         setMessage(res.data.message || "Failed to add to cart");
@@ -475,10 +451,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
 
   return (
     <div className="product-page">
-      <Helmet>
-        <title>{product.product_name} - Jyotisika</title>
-      </Helmet>
-      
+      {/* Discount Banner */}
       <hr />
       {message && <div className="alert alert-info text-center">{message}</div>}
 
@@ -487,16 +460,12 @@ export default function ProductPage({ setCartCount, cartCount }) {
         {/* Left Side - Images */}
         <div className="product-images-section">
           <div className="main-image-container">
-            {productImages.length > 0 && productImages[selectedImage] && (
+            {productImages[selectedImage] && (
               <img
                 src={getImageUrl(productImages[selectedImage])}
                 alt={product.product_name}
                 className="main-product-image"
                 style={{ borderRadius: "8px" }}
-                onError={(e) => {
-                  console.error("Image failed to load:", e.target.src);
-                  e.target.src = '/placeholder-image.jpg';
-                }}
               />
             )}
           </div>
@@ -505,12 +474,9 @@ export default function ProductPage({ setCartCount, cartCount }) {
               <img
                 key={i}
                 src={getImageUrl(img)}
-                alt={`${product.product_name} view ${i + 1}`}
+                alt="thumb"
                 className={`thumbnail-img ${selectedImage === i ? "active" : ""}`}
                 onClick={() => setSelectedImage(i)}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
               />
             ))}
           </div>
@@ -520,69 +486,62 @@ export default function ProductPage({ setCartCount, cartCount }) {
         <div className="product-info-section">
           <h1 className="product-title">{product.product_name}</h1>
 
-          {/* Bead Selection Images */}
-          {beadOptions.length > 0 && (
-            <div className="bead-selection">
-              <div className="bead-images">
-                {beadOptions.map((option, index) => (
-                  <div key={option.id} className="bead-image-container">
-                    <img
-                      src={productImages[0] ? getImageUrl(productImages[0]) : '/placeholder-image.jpg'}
-                      alt={`${option.label} option`}
-                      className="bead-option-image"
-                      onError={(e) => {
-                        e.target.src = '/placeholder-image.jpg';
-                      }}
-                    />
-                    <div className="bead-label">{option.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* Bead Options Selection */}
-          {beadOptions.length > 0 && (
-            <div className="bead-options-container">
-              {beadOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className={`bead-option ${selectedOption && selectedOption.id === option.id ? 'selected' : ''}`}
-                  onClick={() => handleBeadOptionChange(option)}
-                >
-                  <span className="bead-count">{option.label}</span>
+          {/* Bead Selection Images */}
+          <div className="bead-selection">
+            <div className="bead-images">
+              {beadOptions.map((option, index) => (
+                <div key={option.id} className="bead-image-container">
+                  <img
+                    src={productImages[0] ? getImageUrl(productImages[0]) : '/placeholder-image.jpg'}
+                    alt={`${option.label} option`}
+                    className="bead-option-image"
+                  />
+                  <div className="bead-label">{option.label}</div>
                 </div>
               ))}
             </div>
-          )}
+          </div>
+
+          {/* Bead Options Selection */}
+          <div className="bead-options-container">
+            {beadOptions.map((option) => (
+              <div
+                key={option.id}
+                className={`bead-option ${selectedOption.id === option.id ? 'selected' : ''}`}
+                onClick={() => handleBeadOptionChange(option)}
+              >
+                <span className="bead-count">{option.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Quantity Section */}
+          
 
           {/* Price with Discount % */}
-          {selectedOption && (
-            <div className="price-section" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              {selectedOption.originalPrice && selectedOption.originalPrice > selectedOption.price && (
-                <span style={{ textDecoration: "line-through", color: "#888", fontSize: "26px", marginRight: "8px" }}>
-                  ₹{selectedOption.originalPrice.toLocaleString()}
-                </span>
-              )}
-              <div className="current-price">₹{selectedOption.price.toLocaleString()}</div>
-              {selectedOption.originalPrice && selectedOption.originalPrice > selectedOption.price && (
-                <span style={{ color: "green", fontWeight: 600, fontSize: "16px" }}>
-                  {`(${Math.round(((selectedOption.originalPrice - selectedOption.price) / selectedOption.originalPrice) * 100)}% OFF)`}
-                </span>
-              )}
-            </div>
-          )}
+          <div className="price-section" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {product.product_price && Number(product.product_price) > Number(selectedOption.price) && (
+              <span style={{ textDecoration: "line-through", color: "#888", fontSize: "26px", marginRight: "8px" }}>
+                ₹{Number(product.product_price).toLocaleString()}
+              </span>
+            )}
+            <div className="current-price">₹{selectedOption.price.toLocaleString()}</div>
+            {product.product_price && Number(product.product_price) > Number(selectedOption.price) && (
+              <span style={{ color: "green", fontWeight: 600, fontSize: "16px" }}>
+                {`(${Math.round(((Number(product.product_price) - Number(selectedOption.price)) / Number(product.product_price)) * 100)}% OFF)`}
+              </span>
+            )}
+          </div>
 
           {/* Add to Cart Button */}
-          {selectedOption && (
-            <button
-              className={`add-to-cart-button ${inCart ? 'in-cart' : ''}`}
-              onClick={addToCart}
-              disabled={inCart}
-            >
-              {inCart ? '✓ ADDED TO CART' : `ADD TO CART ₹${selectedOption.price.toLocaleString()}`}
-            </button>
-          )}
+          <button
+            className={`add-to-cart-button ${inCart ? 'in-cart' : ''}`}
+            onClick={addToCart}
+            disabled={inCart}
+          >
+            {inCart ? '✓ ADDED TO CART' : `ADD TO CART ₹${selectedOption.price.toLocaleString()}`}
+          </button>
 
           {/* Shipping Info */}
           <div className="shipping-info">
@@ -595,7 +554,7 @@ export default function ProductPage({ setCartCount, cartCount }) {
           <div className="product-features">
             <div className="feature-item">
               <div className="feature-icon"><Package size={20} /></div>
-              <span>Fast Shipping</span>
+              <span>Free Shipping</span>
             </div>
             <div className="feature-item">
               <div className="feature-icon" style={{ height: "38px", width: "38px" }}>🇮🇳</div>
