@@ -585,11 +585,11 @@ export default function ProductPage({ setCartCount, cartCount }) {
           )}
 
           {/* Shipping Info */}
-          <div className="shipping-info">
+          {/* <div className="shipping-info">
             <div className="shipping-timer">
               <Clock size={16} /> Order within <span className="timer">1h 49m</span> for Next Day Shipping
             </div>
-          </div>
+          </div> */}
 
           {/* Features */}
           <div className="product-features">
