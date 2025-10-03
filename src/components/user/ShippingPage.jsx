@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../../styles/ShippingPage.css";
+import { Helmet } from "react-helmet";
 
 const ShippingPage = () => {
   const navigate = useNavigate();
@@ -50,6 +51,9 @@ const ShippingPage = () => {
 
   return (
     <div className="shipping-container">
+    <Helmet>
+        <title>Jyotisika | Shipping</title>
+    </Helmet>
       <div className="shipping-grid">
         {/* Left Section - Stepper */}
         <div className="shipping-left">

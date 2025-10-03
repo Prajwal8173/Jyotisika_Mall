@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../../styles/payment.css";
+import { Helmet } from "react-helmet";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test"; 
 
@@ -185,6 +186,9 @@ const Payment = () => {
 
   return (
     <>
+    <Helmet>
+        <title>Jyotisika | Payment</title>
+    </Helmet>
       <div className="addresss-header">
         <span className="step-inactive">Address</span>
         <span className="step-arrow">&gt;</span>

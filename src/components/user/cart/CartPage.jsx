@@ -3,6 +3,7 @@ import { FaTag } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../../styles/CartPage.css";
+import { Helmet } from "react-helmet";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test/User_Api_Controller";
 
@@ -163,6 +164,9 @@ const CartPage = ({ setCartCount, cartCount }) => {
 
   return (
     <div className="cart-container">
+    <Helmet>
+        <title>Jyotisika | Cart</title>
+    </Helmet>
       <div className="Inner-container">
         {/* Left: Cart Items */}
         <div style={{ flex: 2 }}>
@@ -199,13 +203,18 @@ const CartPage = ({ setCartCount, cartCount }) => {
                         {item.category || "N/A"}
                       </span>
                     </p>
-                    <p className="price">
+                    <p className="price" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <span style={{ textDecoration: "line-through", color: "#888", marginRight: 8 }}>
                         ₹{safeFloat(item.product_price, 0).toFixed(2)}
                       </span>
                       <span style={{ color: "#e53935", fontWeight: 600 }}>
                         ₹{safeFloat(item.discount_price, 0).toFixed(2)}
                       </span>
+                      {item.product_price > item.discount_price && (
+                        <span style={{ color: "#e53935", fontWeight: 600, fontSize: "15px" }}>
+                          {`(${Math.round(((item.product_price - item.discount_price) / item.product_price) * 100)}% OFF)`}
+                        </span>
+                      )}
                     </p>
                     <div className="qty-controls">
                       <button onClick={() => handleDecrement(item)}>-</button>

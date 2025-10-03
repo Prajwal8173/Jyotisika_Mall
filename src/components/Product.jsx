@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star, ChevronLeft, ChevronRight, Shield, ArrowLeft, ArrowRight } from "lucide-react";
 import "../styles/ProductPage.css";
+import { Helmet } from "react-helmet";
 
 // Star Rating Component
 const StarRating = ({ rating = 5, size = 14, showNumber = false }) => (
@@ -208,6 +209,9 @@ const TopShopseller = ({ topProducts, onProductSelect, getImageUrl }) => {
 
   return (
     <section style={styles.container}>
+    <helmet>
+        <title>Jyotisika | Product</title>
+    </helmet>
       <h2 style={styles.title}>Top Shopseller</h2>
       <div style={styles.carouselWrapper}>
         <button style={{ ...styles.navButton, ...styles.navButtonLeft }} onClick={() => scrollTo("left")}>

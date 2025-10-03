@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import rakhi from "../assets/profile.jpg";
 import { Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/AddressPage.css";
+import {Helmet} from "react-helmet";
 
 const BASE_URL = "https://jyotisika.in/jyotisika_test";
 
@@ -148,6 +149,9 @@ export default function AddressPage() {
 
   return (
     <div className="page-container">
+    <Helmet>
+        <title>Jyotisika | Address</title>
+    </Helmet>
       {/* -------- Left Section - Addresses -------- */}
       <div className="address-section">
         {/* Stepper */}
